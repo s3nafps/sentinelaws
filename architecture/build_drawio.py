@@ -869,7 +869,23 @@ def build_xml() -> str:
     return "\n".join(lines) + "\n"
 
 
+FLAGS = {"--check", "--verbose", "--force"}
+
+
+def read_drawio():
+    """The committed file as text, independent of the platform's encoding and
+    of a CRLF checkout (git core.autocrlf on Windows)."""
+    return OUT.read_bytes().decode("utf-8").replace("\r\n", "\n")
+
+
 def main(argv):
+    unknown = [arg for arg in argv if arg not in FLAGS]
+    if unknown:
+        # A mistyped --check must not silently fall through to writing.
+        print(f"unknown option(s): {' '.join(unknown)}; "
+              f"expected any of {' '.join(sorted(FLAGS))}")
+        return 2
+
     problems = audit()
     if problems:
         for problem in problems:
@@ -885,13 +901,16 @@ def main(argv):
     ET.fromstring(xml)  # well-formedness gate
 
     if "--check" in argv:
-        if not OUT.is_file() or OUT.read_text() != xml:
+        if not OUT.is_file() or read_drawio() != xml:
             print(f"{OUT.name} is stale; run python3 architecture/build_drawio.py")
             return 1
         print("architecture/sentinelaws.drawio is up to date")
         return 0
 
-    OUT.write_text(xml)
+    # Explicit UTF-8 and LF: the labels contain non-ASCII characters (arrows,
+    # middle dots), and the platform default encoding on Windows cannot
+    # encode them.
+    OUT.write_bytes(xml.encode("utf-8"))
     print(f"wrote {OUT.name}: {len(NODES)} nodes, {len(EDGES)} connectors, "
           f"{len(cross)} crossings")
     return 0

@@ -85,12 +85,21 @@ container title, or two connectors sharing a segment. Re-export the images
 after any change:
 
 ```bash
-drawio --no-sandbox -x -f svg -o architecture/sentinelaws.svg architecture/sentinelaws.drawio
-drawio --no-sandbox -x -f png --width 3600 -o architecture/sentinelaws.png architecture/sentinelaws.drawio
+drawio -x -f svg -b 24 -o architecture/sentinelaws.svg architecture/sentinelaws.drawio
+drawio -x -f png --width 3600 -b 24 -o architecture/sentinelaws.png architecture/sentinelaws.drawio
 ```
 
+`drawio` is the draw.io desktop CLI as installed on Linux or by the Homebrew
+cask. Elsewhere, call the app directly:
+`"C:\Program Files\draw.io\draw.io.exe"` on Windows (from PowerShell, prefix it
+with `&` and append `| Out-Host` so the shell waits for the export) or
+`/Applications/draw.io.app/Contents/MacOS/draw.io` on macOS. Add
+`--no-sandbox` only when running as root on Linux. On Windows, run the
+generator as `py -3 architecture/build_drawio.py`.
+
 You can also open the file directly in [draw.io](https://app.diagrams.net) or the
-desktop app and use File → Export as.
+desktop app and use File → Export as, but do not save the `.drawio` from the
+editor: it is generated, and CI fails if it differs from the generator output.
 
 The detailed trust boundaries and data flows are in
 [`docs/threat-model.md`](docs/threat-model.md).

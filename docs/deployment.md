@@ -84,9 +84,11 @@ change to `terraform/`:
 ```bash
 python3 architecture/build_drawio.py            # rewrite the .drawio
 python3 architecture/build_drawio.py --check     # what CI runs
-drawio --no-sandbox -x -f svg -o architecture/sentinelaws.svg architecture/sentinelaws.drawio
-drawio --no-sandbox -x -f png --width 3600 -o architecture/sentinelaws.png architecture/sentinelaws.drawio
+drawio -x -f svg -b 24 -o architecture/sentinelaws.svg architecture/sentinelaws.drawio
+drawio -x -f png --width 3600 -b 24 -o architecture/sentinelaws.png architecture/sentinelaws.drawio
 ```
+
+See the README for the draw.io executable on Windows and macOS.
 
 `build_drawio.py` fails rather than emit a diagram whose icons, labels,
 connectors, connector labels or container titles overlap, and every shape comes
